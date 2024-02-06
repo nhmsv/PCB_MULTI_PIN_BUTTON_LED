@@ -15,7 +15,9 @@ Adafruit_NeoPixel strip5 = Adafruit_NeoPixel(countOfLeds, LEDPINs[4], NEO_GRBW +
 Adafruit_NeoPixel strip6 = Adafruit_NeoPixel(countOfLeds, LEDPINs[5], NEO_GRBW + NEO_KHZ800);
 Adafruit_NeoPixel strip7 = Adafruit_NeoPixel(countOfLeds, LEDPINs[6], NEO_GRBW + NEO_KHZ800);
 Adafruit_NeoPixel strip8 = Adafruit_NeoPixel(countOfLeds, LEDPINs[7], NEO_GRBW + NEO_KHZ800);
-int btnTest = A0;
+
+Adafruit_NeoPixel stripPanel = Adafruit_NeoPixel(25, 11, NEO_GRBW + NEO_KHZ800);
+int btnTest = A1;
 int Brightness = 50;
 void setup() {
   Serial.begin(9600);
@@ -29,7 +31,12 @@ void setup() {
   // End of trinket special code
 
 
-  pinMode(btnTest, INPUT_PULLUP);
+  pinMode(14, INPUT_PULLUP);
+  pinMode(15, INPUT_PULLUP);
+  pinMode(16, INPUT_PULLUP);
+  pinMode(17, INPUT_PULLUP);
+  pinMode(18, INPUT_PULLUP);
+  pinMode(19, INPUT_PULLUP);
 
 
   strip1.begin();
@@ -63,31 +70,96 @@ void setup() {
   strip8.begin();
   strip8.setBrightness(Brightness);
   strip8.show();
+
+  stripPanel.begin();
+  stripPanel.setBrightness(Brightness);
+  stripPanel.show();
 }
 
+void TurnOnLed(Adafruit_NeoPixel strip, uint32_t c) {
+  strip.fill(c, 0, 6);
+  strip.show();
+  tone(10, 2000);
+  delay(150);
+  noTone(10);
+  TurnPanelOn(strip2.Color(0, 255, 0));
+
+  delay(1500);
+  TurnOffLed(strip1);
+}
+void TurnOffLed(Adafruit_NeoPixel strip) {
+  /*
+  strip.fill(strip.Color(0, 0, 0), 0, 6);
+  strip.show();
+  */
+  TurnPanelOff();
+}
+
+void TurnPanelOn(uint32_t c) {
+  /*
+  for (uint16_t i = 0; i < stripPanel.numPixels(); i++) {
+    stripPanel.setPixelColor(i, c);
+    stripPanel.show();
+    delay(10);
+  }
+  */
+  stripPanel.fill(c, 0, 25);
+  stripPanel.show();
+}
+
+void TurnPanelOff() {
+  stripPanel.fill(strip1.Color(0, 0, 0), 0, 25);
+  stripPanel.show();
+}
+void runTone() {
+  tone(10, 2000);
+  delay(150);
+  noTone(10);
+}
+void offAllLed() {
+  stripPanel.fill(strip1.Color(0, 0, 0), 0, 25);
+  stripPanel.show();
+  strip1.fill(strip1.Color(0, 0, 0), 0, 6);
+  strip1.show();
+  strip2.fill(strip1.Color(0, 0, 0), 0, 6);
+  strip2.show();
+  
+}
 int a = 0;
 void loop() {
 
 
-
-
-  a = analogRead(btnTest);
-  Serial.println(a);
-
-  if (a <= 50) {
-
+  if (digitalRead(14) == LOW) {
+    offAllLed();
     strip1.fill(strip1.Color(0, 255, 0), 0, 6);
     strip1.show();
-    tone(10, 2000);
-    delay(150);
-    noTone(10);
+    runTone();
+    TurnPanelOn(strip1.Color(0, 255, 0));
     delay(1500);
 
-    //  colorWipe(strip1, strip1.Color(0, 255, 0), 10);  // Red
-
-  } else if (a >= 100) {
+  } else {
     strip1.fill(strip1.Color(0, 0, 0), 0, 6);
     strip1.show();
+    TurnPanelOff();
+
+    // colorWipe(strip1, strip1.Color(255, 0, 0), 10);
+  }
+
+
+
+  if (digitalRead(15) == LOW) {
+    offAllLed();
+    strip2.fill(strip2.Color(255, 0, 0), 0, 6);
+    strip2.show();
+    runTone();
+    TurnPanelOn(strip2.Color(255, 0, 0));
+    delay(1500);
+
+  } else {
+    strip2.fill(strip2.Color(0, 0, 0), 0, 6);
+    strip2.show();
+    TurnPanelOff();
+
     // colorWipe(strip1, strip1.Color(255, 0, 0), 10);
   }
 
