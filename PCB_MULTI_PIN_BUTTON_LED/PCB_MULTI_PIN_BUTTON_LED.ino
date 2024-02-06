@@ -2,7 +2,7 @@
 #ifdef __AVR__
 #include <avr/power.h>
 #endif
-
+#include <ArduinoJson.h>
 int LEDPINs[] = { 2, 3, 4, 5, 6, 7, 8, 9 };
 int BTNPINs[] = { A0, A1, A2, A3, A4, A5, A6, A7 };
 int countOfLeds = 6;
@@ -21,6 +21,9 @@ int btnTest = A1;
 int Brightness = 50;
 void setup() {
   Serial.begin(9600);
+
+
+
   tone(10, 1500);
   delay(100);
   noTone(10);
@@ -123,14 +126,42 @@ void offAllLed() {
   strip1.show();
   strip2.fill(strip1.Color(0, 0, 0), 0, 6);
   strip2.show();
-  
 }
 int a = 0;
+StaticJsonDocument<200> doc;
+void loop_json() {
+      JsonArray data = doc.createNestedArray("data");
+  if (digitalRead(14) == LOW) {
+    offAllLed();
+
+
+    data.add(14);
+    serializeJson(doc, Serial);
+    Serial.println();
+  }
+
+    if (digitalRead(15) == LOW) {
+    offAllLed();
+
+
+    data.add(15);
+    serializeJson(doc, Serial);
+    Serial.println();
+  }
+
+
+}
 void loop() {
 
 
   if (digitalRead(14) == LOW) {
     offAllLed();
+
+    JsonArray data = doc.createNestedArray("data");
+    data.add(48.756080);
+    data.add(2.302038);
+    serializeJson(doc, Serial);
+    Serial.println();
     strip1.fill(strip1.Color(0, 255, 0), 0, 6);
     strip1.show();
     runTone();
